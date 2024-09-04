@@ -121,18 +121,27 @@ const BookingSystem = () => {
     toast.success("All slots cleared successfully");
   };
 
-  const combinedBookings = [
-    ...shopBooked.map(({ slot, count, shopkeeper }) => ({
-      slot,
-      label: shopkeeper ? `${shopkeeper} (Shop)` : `Shop (${count})`,
-    })),
-    ...shopkeepers.flatMap((shopkeep) =>
-      shopkeep.bookedSlots.map((slot) => ({
+  const combinedBookings = timeSlots.reduce((acc, slot) => {
+    const shopkeepersBooked = shopkeepers.filter((shopkeep) =>
+      shopkeep.bookedSlots.includes(slot)
+    );
+
+    if (shopBooked.includes(slot)) {
+      acc.push({
         slot,
-        label: `${slot} (${shopkeep.name})`,
-      }))
-    ),
-  ];
+        type: `Shop (${shopkeepersBooked.length + 1})`,
+      });
+    } else if (shopkeepersBooked.length > 0) {
+      acc.push({
+        slot,
+        type: `${shopkeepersBooked.map((s) => s.name).join(", ")} (Shop [${
+          shopkeepersBooked.length
+        }])`,
+      });
+    }
+
+    return acc;
+  }, []);
 
   combinedBookings.sort((a, b) => {
     const timeA = a.slot.split(":").map(Number);
@@ -140,6 +149,8 @@ const BookingSystem = () => {
 
     return timeA[0] - timeB[0] || timeA[1] - timeB[1];
   });
+
+  console.log("time slots array :", combinedBookings);
 
   const handleClick = (slot, isBooked) => {
     if (isBooked) {
@@ -247,19 +258,21 @@ const BookingSystem = () => {
         {!selectedBooking && (
           <div className="booking-list">
             <h2>Booking :</h2>
-            <ul>
-              {combinedBookings.map(({ slot, label }) => (
-                <li key={`${slot}-${label}`}>{label}</li>
-              ))}
+            <ul style={{ color: "black" }}>
+              {combinedBookings.length > 0 ? (
+                combinedBookings.map(({ slot, type }) => (
+                  <li key={slot}>
+                    {slot} - {type}
+                  </li>
+                ))
+              ) : (
+                <li>No bookings available</li>
+              )}
             </ul>
 
-            {combinedBookings.length > 0 ? (
+            {combinedBookings.length > 0 && (
               <button onClick={clearAllSlots} className="clear-slots-button">
                 Clear Slots
-              </button>
-            ) : (
-              <button className="no-booked-slots-button">
-                No booked slots available
               </button>
             )}
           </div>
