@@ -52,11 +52,9 @@ const BookingSystem = () => {
       (shopkeep) => shopkeep.id === selectedBooking
     );
 
-    const isShopkeeperBooked =
-      shopkeeper.bookedSlots.includes(selectedTimeSlot);
-
-    if (isShopkeeperBooked) {
+    if (shopkeeper.bookedSlots.includes(selectedTimeSlot)) {
       toast.error(`${shopkeeper.name} is already booked for that time slot`);
+      return; // Stop further execution if already booked
     }
 
     updateShopkeeperBooking(selectedBooking, selectedTimeSlot);
@@ -65,26 +63,22 @@ const BookingSystem = () => {
       toast.success("Shop successfully booked");
     }
 
-    selectedBooking(null);
-    selectedTimeSlot(null);
+    setSelectedBooking(null);
+    setSelectedTimeSlot(null);
   };
 
   const book_shop = () => {
-    const availableShopkeeper = shopkeepers.map(
+    const availableShopkeeper = shopkeepers.find(
       (shopkeep) => !shopkeep.bookedSlots.includes(selectedTimeSlot)
     );
 
-    if (
-      availableShopkeeper.length === 0 ||
-      shopBooked.includes(selectedTimeSlot)
-    ) {
+    if (!availableShopkeeper || shopBooked.includes(selectedTimeSlot)) {
       toast.error("Sonu Monu both are busy!!");
       return;
     }
 
-    const shopkeeper = availableShopkeeper[0];
-
-    updateShopkeeperBooking(shopkeeper, selectedTimeSlot);
+    updateShopkeeperBooking(availableShopkeeper.id, selectedTimeSlot);
+    setShopBooked([...shopBooked, selectedTimeSlot]);
 
     setSelectedBooking(null);
     setSelectedTimeSlot(null);
@@ -109,8 +103,8 @@ const BookingSystem = () => {
   });
 
   const clearAllSlots = () => {
-    setShopBooked(
-      shopkeepers.map((shopkeep) => [{ ...shopkeep, bookedSlots: [] }])
+    setSelectedShopkeepers(
+      shopkeepers.map((shopkeep) => ({ ...shopkeep, bookedSlots: [] }))
     );
     setShopBooked([]);
     toast.success("All slots cleared successfully");
@@ -133,7 +127,7 @@ const BookingSystem = () => {
                   setSelectedBooking("shop");
                 }}
                 label={"Book Shop"}
-              ></BookingButton>
+              />
               {shopkeepers.map((shopkeep) => (
                 <BookingButton
                   key={shopkeep.id}
@@ -141,7 +135,7 @@ const BookingSystem = () => {
                     setSelectedBooking(shopkeep.id);
                   }}
                   label={`Book ${shopkeep.name}`}
-                ></BookingButton>
+                />
               ))}
             </>
           )}
@@ -152,8 +146,8 @@ const BookingSystem = () => {
                 {selectedBooking === "shop"
                   ? "Shop"
                   : shopkeepers.find(
-                      (shopkeep) => (shopkeep.id === selectedBooking).name
-                    )}{" "}
+                      (shopkeep) => shopkeep.id === selectedBooking
+                    ).name}{" "}
                 - Select Time Slot
               </h2>
 
@@ -170,6 +164,7 @@ const BookingSystem = () => {
                   const handleClick = () => {
                     if (isBooked) {
                       toast.error("This slot is already booked");
+                      return;
                     }
 
                     setSelectedTimeSlot(slot);
@@ -189,7 +184,7 @@ const BookingSystem = () => {
                         color: "white",
                       }}
                       onClick={handleClick}
-                    ></TimeSlotsButton>
+                    />
                   );
                 })}
               </div>
@@ -244,7 +239,7 @@ const BookingSystem = () => {
         )}
       </div>
 
-      <Toaster position="top-right"></Toaster>
+      <Toaster position="top-right" />
     </>
   );
 };

@@ -1,15 +1,17 @@
 import React from "react";
-import proptypes from "prop-types";
+import PropTypes from "prop-types";
 
 const BookingButton = ({ onClick, label }) => {
-  <button className="booking-button" onClick={onClick}>
-    {label}
-  </button>;
+  return (
+    <button className="booking-button" onClick={onClick}>
+      {label}
+    </button>
+  );
 };
 
-BookingButton.proptypes = {
-  onClick: proptypes.func.isRequired,
-  label: proptypes.string.isRequired,
+BookingButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
 };
 
 export default BookingButton;
