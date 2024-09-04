@@ -1,0 +1,208 @@
+body {
+    margin: 0;
+    font-family: 'UI Sans Serif', sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    justify-content: center;
+    padding: 20px;
+}
+
+.shopname {
+    width: 100%;
+    padding: 20px;
+    background-color: #1F2937;
+    color: white;
+    text-align: center;
+    border-radius: 0 0 8px 8px;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.shopname span {
+    color: #4CAF50;
+}
+
+.shop-container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 120px;
+    gap: 32px;
+    width: 90%;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.booking-options {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.booking-options .booking-button {
+    background-color: #374151;
+    color: white;
+    border: none;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 22px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.booking-options .booking-button:hover {
+    background-color: #2D3748;
+}
+
+.booking-list {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.booking-list h2 {
+    margin: 0;
+    font-size: 28px;
+    color: #2D3748;
+}
+
+.booking-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.booking-list li {
+    background-color: #fff;
+    padding: 18px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-size: 20px;
+    color: #2D3748;
+}
+
+.time-slot-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    width: 80%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+.time-slot-selection h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.time-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.time-slot-button {
+    background-color: #E2E8F0;
+    color: #1F2937;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.time-slot-button:hover {
+    background-color: #CBD5E1;
+}
+
+.clear-slots-button {
+    background-color: #EF4444;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+}
+
+.clear-slots-button:hover {
+    background-color: #DC2626;
+}
+
+.no-booked-slots-button {
+    background-color: #D1D5DB;
+    color: #1F2937;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: not-allowed;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.book-shop-button {
+    background-color: #10B981;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.book-shop-button:hover {
+    background-color: #34D399;
+}
+
+.book-shopkeeper-button {
+    background-color: #2563EB;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.book-shopkeeper-button:hover {
+    background-color: #3B82F6;
+}
+
+.go-back-button {
+    background-color: #F59E0B;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.go-back-button:hover {
+    background-color: #FBBF24;
+}
