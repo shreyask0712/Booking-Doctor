@@ -52,15 +52,30 @@ const BookingSystem = () => {
       (shopkeep) => shopkeep.id === selectedBooking
     );
 
-    if (shopkeeper.bookedSlots.includes(selectedTimeSlot)) {
+    const isShopkeeperBooked =
+      shopkeeper.bookedSlots.includes(selectedTimeSlot);
+
+    if (isShopkeeperBooked) {
       toast.error(`${shopkeeper.name} is already booked for that time slot`);
-      return; // Stop further execution if already booked
+      return; // Return early if the slot is already booked.
     }
 
     updateShopkeeperBooking(selectedBooking, selectedTimeSlot);
 
     if (checkIfAllShopkeepersBooked(selectedTimeSlot)) {
-      toast.success("Shop successfully booked");
+      const existingEntry = shopBooked.find(
+        (entry) => entry.slot === selectedTimeSlot
+      );
+      if (existingEntry) {
+        existingEntry.count++;
+      } else {
+        setShopBooked([...shopBooked, { slot: selectedTimeSlot, count: 1 }]);
+      }
+    } else {
+      setShopBooked([
+        ...shopBooked,
+        { slot: selectedTimeSlot, count: 1, shopkeeper: shopkeeper.name },
+      ]);
     }
 
     setSelectedBooking(null);
@@ -72,26 +87,50 @@ const BookingSystem = () => {
       (shopkeep) => !shopkeep.bookedSlots.includes(selectedTimeSlot)
     );
 
-    if (!availableShopkeeper || shopBooked.includes(selectedTimeSlot)) {
+    if (
+      !availableShopkeeper ||
+      shopBooked.some(
+        (entry) =>
+          entry.slot === selectedTimeSlot && entry.count === shopkeepers.length
+      )
+    ) {
       toast.error("Sonu Monu both are busy!!");
       return;
     }
 
     updateShopkeeperBooking(availableShopkeeper.id, selectedTimeSlot);
-    setShopBooked([...shopBooked, selectedTimeSlot]);
+
+    const existingEntry = shopBooked.find(
+      (entry) => entry.slot === selectedTimeSlot
+    );
+    if (existingEntry) {
+      existingEntry.count++;
+    } else {
+      setShopBooked([...shopBooked, { slot: selectedTimeSlot, count: 1 }]);
+    }
 
     setSelectedBooking(null);
     setSelectedTimeSlot(null);
   };
 
-  const hasBookings =
-    shopBooked.length > 0 ||
-    shopkeepers.some((shopkeep) => shopkeep.bookedSlots.length > 0);
+  const clearAllSlots = () => {
+    setShopBooked([]);
+    setSelectedShopkeepers(
+      shopkeepers.map((shopkeep) => ({ ...shopkeep, bookedSlots: [] }))
+    );
+    toast.success("All slots cleared successfully");
+  };
 
   const combinedBookings = [
-    ...shopBooked.map((slot) => ({ type: "shop", slot })),
+    ...shopBooked.map(({ slot, count, shopkeeper }) => ({
+      slot,
+      label: shopkeeper ? `${shopkeeper} (Shop)` : `Shop (${count})`,
+    })),
     ...shopkeepers.flatMap((shopkeep) =>
-      shopkeep.bookedSlots.map((slot) => ({ type: shopkeep.name, slot }))
+      shopkeep.bookedSlots.map((slot) => ({
+        slot,
+        label: `${slot} (${shopkeep.name})`,
+      }))
     ),
   ];
 
@@ -102,12 +141,12 @@ const BookingSystem = () => {
     return timeA[0] - timeB[0] || timeA[1] - timeB[1];
   });
 
-  const clearAllSlots = () => {
-    setSelectedShopkeepers(
-      shopkeepers.map((shopkeep) => ({ ...shopkeep, bookedSlots: [] }))
-    );
-    setShopBooked([]);
-    toast.success("All slots cleared successfully");
+  const handleClick = (slot, isBooked) => {
+    if (isBooked) {
+      toast.error("This slot is already booked");
+      return;
+    }
+    setSelectedTimeSlot(slot);
   };
 
   return (
@@ -155,20 +194,10 @@ const BookingSystem = () => {
                 {timeSlots.map((slot) => {
                   const isBooked =
                     selectedBooking === "shop"
-                      ? shopBooked.includes(slot) ||
-                        checkIfAllShopkeepersBooked(slot)
+                      ? checkIfAllShopkeepersBooked(slot)
                       : shopkeepers
                           .find((shopkeep) => shopkeep.id === selectedBooking)
                           .bookedSlots.includes(slot);
-
-                  const handleClick = () => {
-                    if (isBooked) {
-                      toast.error("This slot is already booked");
-                      return;
-                    }
-
-                    setSelectedTimeSlot(slot);
-                  };
 
                   return (
                     <TimeSlotsButton
@@ -183,7 +212,7 @@ const BookingSystem = () => {
                           : "#475569",
                         color: "white",
                       }}
-                      onClick={handleClick}
+                      onClick={() => handleClick(slot, isBooked)}
                     />
                   );
                 })}
@@ -219,14 +248,12 @@ const BookingSystem = () => {
           <div className="booking-list">
             <h2>Booking :</h2>
             <ul>
-              {combinedBookings.map(({ type, slot }) => (
-                <li key={`${type}-${slot}`}>
-                  {slot} ({type})
-                </li>
+              {combinedBookings.map(({ slot, label }) => (
+                <li key={`${slot}-${label}`}>{label}</li>
               ))}
             </ul>
 
-            {hasBookings ? (
+            {combinedBookings.length > 0 ? (
               <button onClick={clearAllSlots} className="clear-slots-button">
                 Clear Slots
               </button>
@@ -239,7 +266,7 @@ const BookingSystem = () => {
         )}
       </div>
 
-      <Toaster position="top-right" />
+      <Toaster position="top-right"></Toaster>
     </>
   );
 };
